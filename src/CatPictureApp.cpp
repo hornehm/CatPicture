@@ -1,5 +1,9 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
+#include "cinder/gl/Texture.h"
+#include "cinder/ImageIo.h"
+#include "boost/date_time/posix_time/posix_time.hpp"
+#include "Resources.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -13,43 +17,48 @@ class CatPictureApp : public AppBasic {
 	void draw();
 
   private:
-	float first, second, third;
-	int time, initialTime, speed;
+	 Surface* mySurface;
+
+	static const int appWidth = 800;
+	static const int appHeight = 600;
+	static const int textureSize = 1024;
+
+	void drawRectangle(uint8_t* pixels, int x, int y, int width, int height);
+
+	void drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2);
+
+	
+
 };
 
-//First
+void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int height){
+}
+
+void CatPictureApp::drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2){
+}
+
+
 void CatPictureApp::setup()
 {
-	first = second = third = 0.0f;
-	time = initialTime = 500;
-	speed = 10;
+	
+	mySurface = new Surface(textureSize, textureSize, false);
 }
 
 void CatPictureApp::mouseDown( MouseEvent event )
 {
 }
 
-//Second -Logic in this method
+
 void CatPictureApp::update()
 {
-	first = ((rand() % 11)/10.0f);
-	second = ((rand() % 11)/10.0f);
-	third = ((rand() % 11)/10.0f);
-
-	time -= speed;
-
-	if(time == 0){
-		time = initialTime;
-	}
-
-	Sleep(time);
+	uint8_t* dataArray = (*mySurface).getData();
 }
 
-//Third
+
 void CatPictureApp::draw()
 {
-	// clear out the window with black
-	gl::clear( Color( first, second, third) ); 
+	
+	gl::draw(*mySurface); 
 }
 
 CINDER_APP_BASIC( CatPictureApp, RendererGl )
