@@ -24,13 +24,13 @@ class CatPictureApp:public AppBasic {
 
 	static const int appWidth = 800;
 	static const int appHeight = 600;
-	static const int textureSize = 1024;
+	static const int textureSize = 1024;// number of pixels in the row
 
 	void drawRectangle(uint8_t* pixels, int x, int y, int width, int height, Color8u color);
 
 	void drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2);
 
-	void gradient(uint8_t* pixels, int r1, int g1, int b1, int r2, int g2, int b2);
+	void gradient(uint8_t* pixels, Color8u c);
 
 	void drawCircle(uint8_t* pixels, int x, int y, int r);
 	
@@ -38,25 +38,23 @@ class CatPictureApp:public AppBasic {
 
 };
 
-void CatPictureApp::gradient(uint8_t* pixels, int r1, int g1, int b1, int r2, int g2, int b2){
-	
-	Color8u c1 = Color8u(r1, g1, b1);
-	Color8u c2 = Color8u(r2, g2, b2);
+void CatPictureApp::gradient(uint8_t* pixels, Color8u c){
 
 	for(int i = 0; i <= appHeight; i++){
-		for(int j = 0; j <= appWidth; j++){
-		pixels[3*j] = c1.r;
-		pixels[3*j+1] = c1.b;
-		pixels[3*j+2] = c1.g;
+		for(int j = 0; j <=appWidth; j++){
+			pixels[3*(j+i*textureSize)] = c.r;
+			pixels[3*(j+i*textureSize)+1] = c.g;
+			pixels[3*(j+i*textureSize)+2] = c.b;
+		}
+		c.b -= 0.1;
 		}
 	}
 		
 
 
-}
 
 void CatPictureApp::splat(uint8_t* pixels, uint8_t* splatPixels){
-
+	
 }
 
 void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, int r){
@@ -120,10 +118,13 @@ void CatPictureApp::drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2){
 
 void CatPictureApp::setup()
 {
+	Color8u c1 = Color8u(0, 0, 255);
+	Color8u c2 = Color8u(0, 255, 0);
 
 	mySurface = new Surface(textureSize, textureSize, false);
 
-	
+	uint8_t* dataArray = (*mySurface).getData();
+	gradient(dataArray, c1);
 }
 	
 
@@ -136,17 +137,20 @@ void CatPictureApp::mouseDown( MouseEvent event )
 
 void CatPictureApp::update()
 {
-	uint8_t* dataArray = (*mySurface).getData();
+	
+	/*
 	int posX = 0;
 	int posY = 0;
 	int posX1 = 0;
 	int posY1 = 50;
 	int posX2 = 0;
 	int posY2 = 100;
-	Color8u c = Color8u(255, 0,0);
+	*/
+	/**Color8u c = Color8u(255, 0,0);
 	Color8u c1 = Color8u(0, 0, 255);
 	Color8u c2 = Color8u(0, 255, 0);
-
+	**/
+	/**
 	for(int i = 0; i <=50; i++){
 		drawRectangle(dataArray, posX, posY, 50, 50, c);
 		drawRectangle(dataArray, posX1, posY1, 50, 50, c1);
@@ -159,12 +163,12 @@ void CatPictureApp::update()
 		posY2+=10;
 	
 	}
-	
+	**/
 
 
 	//drawRectangle(dataArray, 100, 100, 200, 100);
 	//drawLine(dataArray, 300, 300, 300, 100);
-	//gradient(dataArray, 0, 255, 0, 0, 0, 255);
+
 
 	//drawCircle(dataArray, 50, 50, 50);
 }
