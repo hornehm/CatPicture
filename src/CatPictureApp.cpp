@@ -186,24 +186,23 @@ void CatPictureApp::convolution(uint8_t* pixels){
 	
 	for(int y = 1; y < appHeight-1; y++){
 		for(int x = 1; x < appWidth-1; x++){
-			//if((pixels[3*(j+i*textureSize)] != (pixels[3*((j+1)+(i+1)*textureSize)])) 
-				//&& ((pixels[3*((j-1)+i*textureSize)] != pixels[3*(j+i*textureSize)]))){
-				
+				if((pixels[3*(x+y*textureSize)] != pixels[3*(x+ (y+2)*textureSize)])){
 					for(int cy = y; cy<=y+2; cy++){
-						for(int cx = x; cx <=y+2; cx++){
+						for(int cx = x; cx <=x+2; cx++){
 							index = 3*(cx+cy*textureSize);
 							num_red += (work_buffer[index]);
 							num_green += (work_buffer[index+1]);
 							num_blue += (work_buffer[index+2]);
 						}
+						index = 3*(x+y*textureSize);
+						pixels[index] = num_red/9;
+						pixels[index+1]  = num_green/9;
+						pixels[index+2] = num_blue/9;
 					}
-					
-							index = 3*(x+y*textureSize);
-							pixels[index] = work_buffer[index]/9;
-							pixels[index+1]  = work_buffer[index+1]/9;
-							pixels[index+2] = work_buffer[index+2]/9;
-		}
-	}
+				}
+				
+		}	
+}
 }
 
 void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, int r){
@@ -236,6 +235,8 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 			pixels[3*(j + i*textureSize)+2] = color.b;
 			}
 		}
+
+	
 		
 	}
 	
@@ -285,7 +286,7 @@ void CatPictureApp::update()
 	
 	}
 	
-	//convolution(dataArray);
+	convolution(dataArray);
 
 	//drawCircle(dataArray, 50, 50, 50);
 	
