@@ -4,7 +4,13 @@
   *@date 9/5/2012
   *
   *@This project satisfies goals of rectangle, circle, gradient, and a convolution based filter. 
-  * I attempted to finish the triangle method, however, it is not complete.
+  * I attempted to finish the triangle method, however, it is not complete. My gradient is also 
+  * not very well incorporated into my picture. It works better without anything else.
+  *
+  *
+  *I used a basic outline from Dr. Brinkman's code for the convolution, except I've added my
+  * own conditions
+  *
   *
 */
 #include "cinder/app/AppBasic.h"
@@ -92,14 +98,13 @@ class CatPictureApp:public AppBasic {
 void CatPictureApp::gradient(uint8_t* pixels, Color8u c){
 
 	for(int i = 0; i <= appHeight; i++){
+		
 		for(int j = 0; j <=appWidth; j++){
-			pixels[3*(j+i*textureSize)] = c.r;
-			pixels[3*(j+i*textureSize)+1] = c.g;
-			pixels[3*(j+i*textureSize)+2] = c.b;
+			pixels[3*(j+i*textureSize)] += c.r;
+			pixels[3*(j+i*textureSize)+1] += c.g;
+			pixels[3*(j+i*textureSize)+2] += c.b;
 		}
-		c.b -= 1;
-		c.r += 1;
-		c.g += 1;
+		
 		}
 	}
 		
@@ -187,6 +192,9 @@ void CatPictureApp::convolution(uint8_t* pixels){
 	
 	for(int y = 1; y < appHeight-1; y++){
 		for(int x = 1; x < appWidth-1; x++){
+				//looks at pixels two rows ahead to see if its not equal
+				// if it isn't it changes the surrounding pixels into the average
+				// and makes it look weird. In a way its sharpening my shapes.
 				if((pixels[3*(x+y*textureSize)] != pixels[3*(x+ (y+2)*textureSize)])){
 					for(int cy = y; cy<=y+2; cy++){
 						for(int cx = x; cx <=x+2; cx++){
@@ -196,9 +204,9 @@ void CatPictureApp::convolution(uint8_t* pixels){
 							num_blue += (work_buffer[index+2]);
 						}
 						index = 3*(x+y*textureSize);
-						pixels[index] = num_red/9;
-						pixels[index+1]  = num_green/9;
-						pixels[index+2] = num_blue/9;
+						pixels[index] = num_red/36;
+						pixels[index+1]  = num_green/36;
+						pixels[index+2] = num_blue/36;
 					}
 				}
 				
@@ -234,7 +242,7 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 	
 	for (int i = y; i <=y +height; i++){
 		for(int j = x; j <=x +width; j++){
-			//this creates a bit of a texture on the rectangle
+			//this creates a bit of a texture/or different surface on the rectangle
 			if ((i%2==0)){
 				pixels[3*(j + i*textureSize)] = 255;
 				pixels[3*(j + i*textureSize)+1] = 255;
@@ -300,11 +308,11 @@ void CatPictureApp::update()
 	drawCircle(dataArray, 300, 100, 100, 10, c);
 	drawCircle(dataArray, 500, 100, 100, 2, c2);
 	drawCircle(dataArray, 500, 400, 200, 20, c1);
-	drawCircle(dataArray, 150, 500, 200, 2, c);
+	drawCircle(dataArray, 150, 450, 150, 2, c);
 
 	convolution(dataArray);
 
-	//gradient(dataArray, c1);
+	gradient(dataArray, c1);
 	
 	}
 
