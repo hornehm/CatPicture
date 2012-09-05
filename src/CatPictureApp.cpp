@@ -1,11 +1,18 @@
+/**
+  *My solution to HW01
+  *@author Heather Horne
+  *@date 9/5/2012
+  *
+  *@This project satisfies goals of rectangle, circle, gradient, and a convolution based filter. 
+  * I attempted to finish the triangle method, however, it is not complete.
+  *
+*/
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/ImageIo.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "Resources.h"
-
-
 
 using namespace ci;
 using namespace ci::app;
@@ -18,7 +25,6 @@ class CatPictureApp:public AppBasic {
 	void update();
 	void draw();
 
-
   private:
 
 	 Surface* mySurface;
@@ -29,15 +35,54 @@ class CatPictureApp:public AppBasic {
 
 	uint8_t* convPattern;
 
+	/**
+	  *Fills a rectangle at a given point
+	  *
+	  *Fills the rectangle starting at origin (x, y) with a width 
+	  * and height. It also fills the rectangle with a given color (color8u).
+	  * The size of the rectangle is controlled by the height and width.
+	  *
+	  *This satisfies the rectangle requirement.
+	*/
 	void drawRectangle(uint8_t* pixels, int x, int y, int width, int height, Color8u color);
 
-
+	/**
+	  *Changes smoothly from one color to the next vertically
+	  *
+	  *Given the data array and color, it changes from one color 
+	  * to another in a vertical fashion.
+	  *
+	  *This satisfies the gradient requirement.
+	*/
 	void gradient(uint8_t* pixels, Color8u c);
 
+	/**
+	  *Draws a circle at center (x, y) with radius r
+	  *
+	  *Draws an outline of a circle without filling it in with
+	  * center (x, y) and radius r. The color can be changed as given.
+	  *
+	  *This satisfies the circle requirement
+	*/
 	void drawCircle(uint8_t* pixels, int x, int y, int r);
 	
+	/**
+	  *Abstracts the picture through a convolution filter
+	  *
+	  *Searches the whole screen while changing surrounding
+	  * pixel values to the averages around. Although I did 
+	  * not include a kernal.
+	  *
+	  *This satisfies the Convulation requirement.
+	*/
 	void convolution(uint8_t* pixels);
 
+	/**
+	  *Fills in a triangle with three given corner points
+	  *
+	  *This method is not complete. My logic is a bit messy here.
+	  * However, it still manages to produce something.
+	*/
 	void drawTriangle(uint8_t* pixels, int x1, int y1, int x2, int y2, int x3, int y3);
 
 };
@@ -58,14 +103,18 @@ void CatPictureApp::gradient(uint8_t* pixels, Color8u c){
 	}
 		
 void CatPictureApp::drawTriangle(uint8_t* pixels, int x1, int y1, int x2, int y2, int x3, int y3){
+
 	float d1, d2, d3;
 	float xyD1, xyD2, xyD3;
+
+	//Find the distances between each point
 	d1 = sqrt((float)(((y2-y1)*(y2-y1)) + ((x2-x1)*(x2-x1))));
 	d2 = sqrt((float)(((y3-y2)*(y3-y2)) + ((x3-x2)*(x3-x2))));
 	d3 = sqrt((float)(((y3-y1)*(y3-y1)) + ((x3-x1)*(x3-x1))));
 
 	int startx, endx, starty, endy;
 
+	//Figure out which value is the lowest and highest for x and y
 	if((x1< x2) && (x1<x3)){
 		startx = x1;
 	}
@@ -104,13 +153,17 @@ void CatPictureApp::drawTriangle(uint8_t* pixels, int x1, int y1, int x2, int y2
 		endy = y3;
 	}
 
-
+	//start with row y and the start column
 	for(int y = starty; y<=endy; y++){
 		for(int x = startx; x<=endx; x++){
+			
+			//Calculate distance between the (x,y) coordinates from the 
+			// given points
 			xyD1 = sqrt((float)(((y2-y)*(y2-y)) + ((x2-x)*(x2-x))));
 			xyD2 = sqrt((float)(((y3-y)*(y3-y)) + ((x3-x)*(x3-x))));
 			xyD3 = sqrt((float)(((y1-y)*(y1-y)) + ((x1-x)*(x1-x))));
 
+			//Determine whether the point is in the triangle
 			if((xyD1 < d1)&&(xyD2 <d2)&&(xyD3<d2)){
 				pixels[3*(x+y*textureSize)] = 0;
 				pixels[3*(x+y*textureSize)+1] = 255;
@@ -149,10 +202,6 @@ void CatPictureApp::convolution(uint8_t* pixels){
 							pixels[index] = work_buffer[index]/9;
 							pixels[index+1]  = work_buffer[index+1]/9;
 							pixels[index+2] = work_buffer[index+2]/9;
-						
-					
-
-			
 		}
 	}
 }
@@ -175,7 +224,7 @@ void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, int r){
 void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int height, Color8u color){
 	
 	for (int i = y; i <=y +height; i++){
-		for(int j = x; j <=x + width; j++){
+		for(int j = x; j <=x +width; j++){
 			pixels[3*(j + i*textureSize)] = color.r;
 			pixels[3*(j + i*textureSize)+1] = color.g;
 			pixels[3*(j + i*textureSize)+2] = color.b;
@@ -186,21 +235,13 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 	}
 
 
-
-
-
-
 void CatPictureApp::setup()
 {
 
-
 	mySurface = new Surface(textureSize, textureSize, false);
-	
-
 	
 }
 	
-
 
 
 void CatPictureApp::mouseDown( MouseEvent event )
@@ -212,7 +253,7 @@ void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*mySurface).getData();
 	drawTriangle(dataArray, 0, 0, 100, 200, 200, 100);
-	/*
+	
 	int posX = 0;
 	int posY = 0;
 	int posX1 = 0;
@@ -242,10 +283,8 @@ void CatPictureApp::update()
 	drawCircle(dataArray, 50, 50, 50);
 	
 	gradient(dataArray, c1);
-	*/
+	
 	}
-
-
 
 void CatPictureApp::draw()
 {
