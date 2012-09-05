@@ -6,6 +6,7 @@
 #include "Resources.h"
 
 
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -22,8 +23,6 @@ class CatPictureApp:public AppBasic {
 
 	 Surface* mySurface;
 
-	 
-
 	static const int appWidth = 800;
 	static const int appHeight = 600;
 	static const int textureSize = 1024;// number of pixels in the row
@@ -32,13 +31,14 @@ class CatPictureApp:public AppBasic {
 
 	void drawRectangle(uint8_t* pixels, int x, int y, int width, int height, Color8u color);
 
-	void drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2);
 
 	void gradient(uint8_t* pixels, Color8u c);
 
 	void drawCircle(uint8_t* pixels, int x, int y, int r);
 	
 	void convolution(uint8_t* pixels);
+
+	void drawTriangle(uint8_t* pixels, int x1, int y1, int x2, int y2, int x3, int y3);
 
 };
 
@@ -57,7 +57,70 @@ void CatPictureApp::gradient(uint8_t* pixels, Color8u c){
 		}
 	}
 		
+void CatPictureApp::drawTriangle(uint8_t* pixels, int x1, int y1, int x2, int y2, int x3, int y3){
+	float d1, d2, d3;
+	float xyD1, xyD2, xyD3;
+	d1 = sqrt((float)(((y2-y1)*(y2-y1)) + ((x2-x1)*(x2-x1))));
+	d2 = sqrt((float)(((y3-y2)*(y3-y2)) + ((x3-x2)*(x3-x2))));
+	d3 = sqrt((float)(((y3-y1)*(y3-y1)) + ((x3-x1)*(x3-x1))));
 
+	int startx, endx, starty, endy;
+
+	if((x1< x2) && (x1<x3)){
+		startx = x1;
+	}
+	else if((x2<x1) && (x2 < x3)){
+		startx = x2;
+	}
+	else{
+		startx = x3;
+	}
+	if((x1> x2) && (x1>x3)){
+		endx = x1;
+	}
+	else if((x2>x1) && (x2 > x3)){
+		endx = x2;
+	}
+	else{
+		endx = x3;
+	}
+
+	if((y1< y2) && (y1<y3)){
+		starty = y1;
+	}
+	else if((y2<y1) && (y2 < y3)){
+		starty = y2;
+	}
+	else{
+		starty = y3;
+	}
+	if((y1> y2) && (y1>y3)){
+		endy = y1;
+	}
+	else if((y2>y1) && (y2 > y3)){
+		endy = y2;
+	}
+	else{
+		endy = y3;
+	}
+
+
+	for(int y = starty; y<=endy; y++){
+		for(int x = startx; x<=endx; x++){
+			xyD1 = sqrt((float)(((y2-y)*(y2-y)) + ((x2-x)*(x2-x))));
+			xyD2 = sqrt((float)(((y3-y)*(y3-y)) + ((x3-x)*(x3-x))));
+			xyD3 = sqrt((float)(((y1-y)*(y1-y)) + ((x1-x)*(x1-x))));
+
+			if((xyD1 < d1)&&(xyD2 <d2)&&(xyD3<d2)){
+				pixels[3*(x+y*textureSize)] = 0;
+				pixels[3*(x+y*textureSize)+1] = 255;
+				pixels[3*(x+y*textureSize)+2] = 0;
+			}
+		}
+	}
+
+
+}
 
 
 void CatPictureApp::convolution(uint8_t* pixels){
@@ -124,33 +187,6 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 
 
 
-void CatPictureApp::drawLine(uint8_t* pixels, int x1, int y1, int x2, int y2){
-	int tmp;
-	if(x2 < x1){
-		tmp = x2;
-		x2 = x1;
-		x1 = tmp;
-		
-	}
-	if(y2 < y1){
-		tmp = y2;
-		y2 = y1;
-		y1 = tmp;
-	}
-
-	double slope = ((double)(y2-y1)/(double)(x2-x1));
-	
-	int x, y=0;
-
-	for(int y = y1; y <= y2; y++){
-			x = (int)(x2 +(slope*(y-y1)));
-			pixels[3*(x + y*textureSize)] = 0;
-			pixels[3*(x + y*textureSize)+1] = 255;
-			pixels[3*(x + y*textureSize)+2] = 0;
-			
-		}
-	}
-
 
 
 
@@ -175,7 +211,8 @@ void CatPictureApp::mouseDown( MouseEvent event )
 void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*mySurface).getData();
-
+	drawTriangle(dataArray, 0, 0, 100, 200, 200, 100);
+	/*
 	int posX = 0;
 	int posY = 0;
 	int posX1 = 0;
@@ -205,7 +242,9 @@ void CatPictureApp::update()
 	drawCircle(dataArray, 50, 50, 50);
 	
 	gradient(dataArray, c1);
-}
+	*/
+	}
+
 
 
 void CatPictureApp::draw()
