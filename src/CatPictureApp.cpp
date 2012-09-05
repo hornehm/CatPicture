@@ -314,6 +314,12 @@ void CatPictureApp::update()
 
 	gradient(dataArray, c1);
 	
+	int frameNum = 0;
+	if(frameNum == 0){
+		writeImage("hornehm.png", *mySurface);
+		//We do this here, instead of setup, because we don't want to count the writeImage time in our estimate
+			}
+	frameNum++;
 	}
 
 void CatPictureApp::draw()
