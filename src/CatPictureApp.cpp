@@ -61,10 +61,11 @@ class CatPictureApp:public AppBasic {
 	  *
 	  *Draws an outline of a circle without filling it in with
 	  * center (x, y) and radius r. The color can be changed as given.
+	  * The thickness can also be determined.
 	  *
 	  *This satisfies the circle requirement
 	*/
-	void drawCircle(uint8_t* pixels, int x, int y, int r);
+	void drawCircle(uint8_t* pixels, int x, int y, float r, int boldness, Color8u c);
 	
 	/**
 	  *Abstracts the picture through a convolution filter
@@ -202,21 +203,28 @@ void CatPictureApp::convolution(uint8_t* pixels){
 				}
 				
 		}	
-}
+	}
 }
 
-void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, int r){
-	int x, y;
-	double d;
-	const double pi = 3.14159265;
-	for(d=0; d<= 2*pi; d+= 0.01){
-		x = (int)(cx+sin(d)*r);
-		y = (int)(cy+sin(d+(pi/2))*r);
-		pixels[3*(x + y*textureSize)] = 0;
-		pixels[3*(x + y*textureSize)+1] = 255;
-		pixels[3*(x + y*textureSize)+2] = 0;
+
+void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, float r, int boldness, Color8u c){
+
+	float radius;
+	r = sqrt((float)(cx*cx)+(float)(cy*cy));
+	for(int y = 0; y < appHeight-1; y++){
+		for(int x = 0; x < appWidth-1; x++){
+			radius = sqrt((float)(x*x)+(float)(y*y));
+			if((radius >= r-boldness)&&(radius <= r + boldness)){
+				for(int i = y; i < y+2; i++){
+					for(int j = x; j < x+2; j++){
+						pixels[3*(x+y*textureSize)] = c.r;
+						pixels[3*(x+y*textureSize) +1] = c.g;
+						pixels[3*(x+y*textureSize) +2] = c.b;
+					}
+				}
+		}
 	}
-	
+}
 }
 
 
@@ -235,9 +243,6 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 			pixels[3*(j + i*textureSize)+2] = color.b;
 			}
 		}
-
-	
-		
 	}
 	
 	}
@@ -273,6 +278,7 @@ void CatPictureApp::update()
 	Color8u c1 = Color8u(0, 0, 255);
 	Color8u c2 = Color8u(0, 255, 0);
 
+	
 	for(int i = 0; i <=50; i++){
 		drawRectangle(dataArray, posX, posY, 50, 50, c);
 		drawRectangle(dataArray, posX1, posY1, 50, 50, c1);
@@ -285,11 +291,11 @@ void CatPictureApp::update()
 		posY2+=10;
 	
 	}
-	
+
+	drawCircle(dataArray, 200, 200, 100, 5, c2);
+
 	convolution(dataArray);
 
-	//drawCircle(dataArray, 50, 50, 50);
-	
 	//gradient(dataArray, c1);
 	
 	}
