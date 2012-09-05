@@ -210,10 +210,12 @@ void CatPictureApp::convolution(uint8_t* pixels){
 void CatPictureApp::drawCircle(uint8_t* pixels, int cx, int cy, float r, int boldness, Color8u c){
 
 	float radius;
-	r = sqrt((float)(cx*cx)+(float)(cy*cy));
+	
 	for(int y = 0; y < appHeight-1; y++){
 		for(int x = 0; x < appWidth-1; x++){
-			radius = sqrt((float)(x*x)+(float)(y*y));
+			//See if points are on circle
+			radius = sqrt(((float)(x-cx)*(x-cx))+((float)(y-cy)*(y-cy)));
+			//If the radius is within a certain range, change 9 surrounding pixels
 			if((radius >= r-boldness)&&(radius <= r + boldness)){
 				for(int i = y; i < y+2; i++){
 					for(int j = x; j < x+2; j++){
@@ -232,6 +234,7 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 	
 	for (int i = y; i <=y +height; i++){
 		for(int j = x; j <=x +width; j++){
+			//this creates a bit of a texture on the rectangle
 			if ((i%2==0)){
 				pixels[3*(j + i*textureSize)] = 255;
 				pixels[3*(j + i*textureSize)+1] = 255;
@@ -293,6 +296,11 @@ void CatPictureApp::update()
 	}
 
 	drawCircle(dataArray, 200, 200, 100, 5, c2);
+	drawCircle(dataArray, 100, 100, 100, 3, c1);
+	drawCircle(dataArray, 300, 100, 100, 10, c);
+	drawCircle(dataArray, 500, 100, 100, 2, c2);
+	drawCircle(dataArray, 500, 400, 200, 20, c1);
+	drawCircle(dataArray, 150, 500, 200, 2, c);
 
 	convolution(dataArray);
 
