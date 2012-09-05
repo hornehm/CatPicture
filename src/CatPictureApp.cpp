@@ -225,9 +225,16 @@ void CatPictureApp::drawRectangle(uint8_t* pixels, int x, int y, int width, int 
 	
 	for (int i = y; i <=y +height; i++){
 		for(int j = x; j <=x +width; j++){
+			if ((i%2==0)){
+				pixels[3*(j + i*textureSize)] = 255;
+				pixels[3*(j + i*textureSize)+1] = 255;
+				pixels[3*(j + i*textureSize)+2] = 255;
+			}
+			else{
 			pixels[3*(j + i*textureSize)] = color.r;
 			pixels[3*(j + i*textureSize)+1] = color.g;
 			pixels[3*(j + i*textureSize)+2] = color.b;
+			}
 		}
 		
 	}
@@ -252,7 +259,7 @@ void CatPictureApp::mouseDown( MouseEvent event )
 void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*mySurface).getData();
-	drawTriangle(dataArray, 0, 0, 100, 200, 200, 100);
+	//drawTriangle(dataArray, 0, 0, 100, 200, 200, 100);
 	
 	int posX = 0;
 	int posY = 0;
@@ -278,11 +285,11 @@ void CatPictureApp::update()
 	
 	}
 	
-	convolution(dataArray);
+	//convolution(dataArray);
 
-	drawCircle(dataArray, 50, 50, 50);
+	//drawCircle(dataArray, 50, 50, 50);
 	
-	gradient(dataArray, c1);
+	//gradient(dataArray, c1);
 	
 	}
 
